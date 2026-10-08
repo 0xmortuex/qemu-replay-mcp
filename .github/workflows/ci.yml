@@ -49,4 +49,8 @@ jobs:
           python-version: "3.12"
       - run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 qemu-utils
       - run: pip install anyio ".[test]"
+      - run: qemu-system-i386 --version
       - run: pytest tests/test_qemu_integration.py -v
+      - name: QEMU stderr from failed recordings/replays
+        if: failure()
+        run: find /tmp/pytest-of-* -name '*.stderr' -print -exec cat {} \;
