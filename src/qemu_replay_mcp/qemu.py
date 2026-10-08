@@ -10,6 +10,7 @@ import json
 import os
 import shutil
 import socket
+import subprocess
 import sys
 import time
 from typing import Any
@@ -117,6 +118,22 @@ class QMP:
             if "error" in resp:
                 raise QemuError(f"{name}: {resp['error'].get('desc', resp['error'])}")
             return resp.get("return")
+
+    def quit(self, proc: subprocess.Popen[bytes], timeout: float = 30.0) -> None:
+        """Ask QEMU to exit and wait for it.
+
+        QEMU may close the QMP socket before its reply arrives (8.2 does; 11.0
+        replies first), so a dropped connection after `quit` is the expected
+        outcome, not an error. What counts is that the process exits.
+        """
+        try:
+            self.command("quit")
+        except QemuError:
+            pass
+        try:
+            proc.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            raise QemuError(f"QEMU did not exit within {timeout}s of `quit`") from None
 
     def close(self) -> None:
         try:

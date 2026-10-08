@@ -137,8 +137,7 @@ def record(name: str, directory: str, kernel: str, arch: str = "i386", memory_mb
         rec.end_icount = int(qmp.command("query-replay")["icount"])
         rec.ended_by = ended_by
         rec.duration_s = round(time.monotonic() - start, 2)
-        qmp.command("quit")
-        proc.wait(timeout=30)
+        qmp.quit(proc)
     finally:
         if proc.poll() is None:
             proc.kill()
