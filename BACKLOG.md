@@ -18,8 +18,16 @@ Real, finishable improvements - pick ONE, ship it end-to-end with tests.
 - [ ] Switch `gdbstub-mcp @ git+https://...` to a PyPI version pin once gdbstub-mcp is
       published. PyPI rejects packages with direct URL dependencies, so this must be
       done BEFORE publishing qemu-replay-mcp to PyPI.
-- [ ] Upstream to gdbstub-mcp: (1) ship a `py.typed` marker (we work around it with
-      mypy `follow_untyped_imports`); (2) a public resume-with-packet API so `bs`/`bc`
-      don't need RSPClient internals (`reverse_resume` in replay.py); (3) caller frames
-      in `Session.backtrace` should look up `return_address - 1` (we re-render them in
-      `_call_stack`).
+- [x] Upstream to gdbstub-mcp (done in gdbstub-mcp fda9444): `py.typed`, public
+      `resume(reverse=True)` (now used by `reverse_resume`), and caller frames looked up
+      at `return_address - 1`.
+- [ ] Drop `_call_stack`'s own frame re-rendering now that `Session.backtrace` gets
+      caller lines right.
+
+## Findings
+- Periodic `savevm` snapshots during recording (tried 2026-10-08, QEMU 11.0.50): snapshots
+  are valid (each carries its ICOUNT in `qemu-img snapshot -l`), but reverse-continue to a
+  write watchpoint on a hot variable got *slower* (4s loop recording: 57s with only the
+  init snapshot, >120s with one every 0.5s). Likely the per-hit watchpoint cost dominates.
+  Before retrying: measure with a cold variable, and read QEMU's
+  replay_reverse_continue to see how it walks snapshots.

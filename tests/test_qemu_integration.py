@@ -117,8 +117,12 @@ def test_record_until_serial_marker(rec_dir):
 def test_record_timeout_and_replay_past_a_quit(rec_dir):
     # The loop kernel never stops: recording ends by timeout + quit. Without
     # the end fence, replaying past the recorded quit would exit QEMU.
-    out = S.replay_record("loop", LOOP, timeout_s=1.5)
-    assert "timeout after 1.5s" in out
+    # Keep the recording short: reverse-continue replays from the nearest
+    # snapshot, and a write watchpoint on `counter` fires every loop
+    # iteration, so its cost grows with recording length. 1.5s of recording
+    # (~500M instructions) took >120s to reverse on a loaded machine.
+    out = S.replay_record("loop", LOOP, timeout_s=0.4)
+    assert "timeout after 0.4s" in out
     S.replay_start("loop")
     assert "End of recording reached" in S.replay_continue("loop", timeout_s=60)
     assert "halted" in S.replay_status("loop")

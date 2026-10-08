@@ -53,8 +53,3 @@ select = ["E4", "E7", "E9", "F"]
 module = ["capstone"]
 ignore_missing_imports = true
 
-[[tool.mypy.overrides]]
-# gdbstub-mcp is fully annotated (mypy --strict clean) but doesn't ship a
-# py.typed marker yet; follow its source instead of treating it as Any.
-module = ["gdbstub_mcp", "gdbstub_mcp.*"]
-follow_untyped_imports = true

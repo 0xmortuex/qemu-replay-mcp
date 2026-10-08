@@ -33,14 +33,8 @@ from .recording import Recording, _tail, machine_args
 
 
 def reverse_resume(session: Session, step: bool) -> None:
-    """Send `bs`/`bc`. gdbstub-mcp's RSPClient only exposes forward resume,
-    so this mirrors RSPClient.resume() with the reverse packets."""
-    rsp = session.rsp
-    with rsp._lock:
-        if rsp.running:
-            raise RSPError("target is already running")
-        rsp._send_packet(b"bs" if step else b"bc")
-        rsp.running = True
+    """Send `bs`/`bc` (gdbstub-mcp checks the stub advertises them)."""
+    session.rsp.resume(step=step, reverse=True)
 
 
 class ReplaySession:
