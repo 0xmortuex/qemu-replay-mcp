@@ -7,10 +7,9 @@ license = { text = "MIT" }
 authors = [{ name = "0xmortuex" }]
 requires-python = ">=3.10"
 # gdbstub-mcp supplies the RSP client, register layout, symbols and backtraces.
-# Pinned to the git repo until it is published on PyPI (see BACKLOG.md).
 dependencies = [
     "mcp>=2.0.0",
-    "gdbstub-mcp @ git+https://github.com/0xmortuex/gdbstub-mcp",
+    "gdbstub-mcp>=0.1.0",
 ]
 keywords = ["mcp", "qemu", "record-replay", "reverse-debugging", "time-travel", "osdev", "kernel", "debugger"]
 classifiers = [
@@ -38,9 +37,6 @@ qemu-replay-mcp = "qemu_replay_mcp.server:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.hatch.metadata]
-allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/qemu_replay_mcp"]

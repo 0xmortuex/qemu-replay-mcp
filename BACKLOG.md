@@ -15,7 +15,7 @@ Real, finishable improvements - pick ONE, ship it end-to-end with tests.
 - [ ] Real-mode pc at icount 0: show CS.base + EIP (same backlog item as gdbstub-mcp).
 
 ## Dependencies
-- [ ] Switch `gdbstub-mcp @ git+https://...` to a PyPI version pin once gdbstub-mcp is
+- [x] Switch `gdbstub-mcp @ git+https://...` to a PyPI version pin once gdbstub-mcp is
       published. PyPI rejects packages with direct URL dependencies, so this must be
       done BEFORE publishing qemu-replay-mcp to PyPI.
 - [x] Upstream to gdbstub-mcp (done in gdbstub-mcp fda9444): `py.typed`, public
